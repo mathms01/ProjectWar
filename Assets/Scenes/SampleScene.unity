@@ -434,5 +434,25 @@ PrefabInstance:
       propertyPath: teams.Array.size
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 4555768322282932897, guid: baec7450d5a882b48ac6c928acde1955, type: 3}
+      propertyPath: monsters.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4555768322282932897, guid: baec7450d5a882b48ac6c928acde1955, type: 3}
+      propertyPath: monsters.Array.data[0]
+      value: 
+      objectReference: {fileID: 1090219386143568, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+    - target: {fileID: 4555768322282932897, guid: baec7450d5a882b48ac6c928acde1955, type: 3}
+      propertyPath: monsters.Array.data[1]
+      value: 
+      objectReference: {fileID: 1919012471076396, guid: 55776efecb0cd134ea5f418c2f97a705, type: 3}
+    - target: {fileID: 4555768322282932897, guid: baec7450d5a882b48ac6c928acde1955, type: 3}
+      propertyPath: monsters.Array.data[2]
+      value: 
+      objectReference: {fileID: 1837317425425208, guid: 3aec22b5d3f3c2947bb81040b56e5f96, type: 3}
+    - target: {fileID: 4555768322282932897, guid: baec7450d5a882b48ac6c928acde1955, type: 3}
+      propertyPath: monsters.Array.data[3]
+      value: 
+      objectReference: {fileID: 1774625739149480, guid: 38efdaadbfe1d624bbee439cb02e7661, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: baec7450d5a882b48ac6c928acde1955, type: 3}

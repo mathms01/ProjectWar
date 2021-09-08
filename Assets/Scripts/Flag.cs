@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class Flag : Entity
 {
-    public Flag(int posX, int posY)
+    public void CreateFlag(int posX, int posY)
     {
         this.posX = posX;
         this.posY = posY;
         this.fullLife = 1000;
         this.currentLife = fullLife;
-        this.elementGameObject = (GameObject)Resources.Load("Prefabs/Flag", typeof(GameObject));
-        this.elementGameObject.transform.position = new Vector3(posX, 5f, posY);
-        Instantiate(this.elementGameObject);
+        this.elementGameObject = this.gameObject;
+        this.elementGameObject.transform.position = new Vector3(posX, 3f, posY);
     }
 }

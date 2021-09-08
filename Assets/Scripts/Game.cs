@@ -12,12 +12,14 @@ public class Game : MonoBehaviour
 
     public int ROUND = 0;
 
-    public List<Box> boxes;
+    public List<GameObject> boxes;
 
-    public List<Warrior> warriors;
+    public List<GameObject> warriors;
     public List<Team> teams;
 
-    private Flag flag;
+    public List<GameObject> monsters;
+
+    private GameObject flag;
 
     // Start is called before the first frame update
     void Start()
@@ -27,24 +29,34 @@ public class Game : MonoBehaviour
 
     private void InitiateGame()
     {
-        boxes = new List<Box>();
-        warriors = new List<Warrior>();
+        boxes = new List<GameObject>();
+        warriors = new List<GameObject>();
 
         for (int i = 0; i < DESKSIZE; i++)
         {
             for (int j = 0; j < DESKSIZE; j++)
             {
-                boxes.Add(new Box(i, j));   
+                GameObject newBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                Box boxObject = newBox.AddComponent<Box>() as Box;
+                boxObject.CreateBox(i, j);
+                boxes.Add(newBox);   
             }
         }
 
         Vector2Int pos = ProcessFlagSpawn();
-        flag = new Flag(pos.x, pos.y);
+        flag = Instantiate((GameObject)Resources.Load("Prefabs/Flag", typeof(GameObject)));
+        Flag flagObject = flag.AddComponent<Flag>() as Flag;
+        flagObject.CreateFlag(pos.x, pos.y);
+        Instantiate(flag);
+
 
         for (int i = 0; i < WARRIORSATSTART; i++)
         {
             Vector2Int posWarriors = ProcessWarriorSpawn();
-            warriors.Add(new Warrior(posWarriors.x, posWarriors.y));
+            GameObject newWarrior = Instantiate(monsters[Random.Range (0, monsters.Count)]);
+            Warrior warrior = newWarrior.AddComponent<Warrior>() as Warrior;
+            warrior.CreateWarrior(posWarriors.x, posWarriors.y);
+            warriors.Add(newWarrior);
         }
 
         StartCoroutine("PlayRound");
@@ -58,8 +70,8 @@ public class Game : MonoBehaviour
             Debug.Log("Round - "+ROUND);
             foreach (var warrior in warriors)
             {
-                ProcessWarriorMoveToFlag(warrior);
-                ProcessWarriorAttack(warrior);
+                ProcessWarriorMoveToFlag(warrior.GetComponent<Warrior>());
+                ProcessWarriorAttack(warrior.GetComponent<Warrior>());
                 yield return new WaitForSeconds(TIMEBETWEENMOVES);
             }
             yield return new WaitForSeconds(TIMEBETWEENROUNDS);    
@@ -76,43 +88,43 @@ public class Game : MonoBehaviour
 
     private void ProcessWarriorMove(Warrior warrior)
     {
-        List<Box> boxesFinded = boxes.FindAll(x => x.isFull == false && Functions.TestRange(x.posX, warrior.posX-1,warrior.posX+1) && Functions.TestRange(x.posY, warrior.posY-1,warrior.posY+1));
-        Box box = boxesFinded[Random.Range (0, boxesFinded.Count)];
-        box.isFull = true;
+        List<GameObject> boxesFinded = boxes.FindAll(x => x.GetComponent<Box>().isFull == false && Functions.TestRange(x.GetComponent<Box>().posX, warrior.posX-1,warrior.posX+1) && Functions.TestRange(x.GetComponent<Box>().posY, warrior.posY-1,warrior.posY+1));
+        GameObject box = boxesFinded[Random.Range (0, boxesFinded.Count)];
+        box.GetComponent<Box>().isFull = true;
 
-        boxes.Find(x => warrior.posX == x.posX && warrior.posY == x.posY).isFull = false;
+        boxes.Find(x => warrior.posX == x.GetComponent<Box>().posX && warrior.posY == x.GetComponent<Box>().posY).GetComponent<Box>().isFull = false;
 
-        warrior.Move(box);
+        warrior.Move(box.GetComponent<Box>());
     }
 
     private void ProcessWarriorMoveToFlag(Warrior warrior)
     {
-        warrior.target = flag;
-        List<Box> boxesFinded = boxes.FindAll(x => x.isFull == false && Functions.TestRange(x.posX, warrior.posX-1,warrior.posX+1) && Functions.TestRange(x.posY, warrior.posY-1,warrior.posY+1));
+        warrior.target = flag.GetComponent<Entity>();
+        List<GameObject> boxesFinded = boxes.FindAll(x => x.GetComponent<Box>().isFull == false && Functions.TestRange(x.GetComponent<Box>().posX, warrior.posX-1,warrior.posX+1) && Functions.TestRange(x.GetComponent<Box>().posY, warrior.posY-1,warrior.posY+1));
 
-        Box box = boxesFinded[0];
+        GameObject box = boxesFinded[0];
         float distance = 1000f;
         foreach (var boxVar in boxesFinded)
         {
-            float distanceTmp = Vector2Int.Distance(new Vector2Int(boxVar.posX, boxVar.posY), new Vector2Int(flag.posX, flag.posY));
+            float distanceTmp = Vector2Int.Distance(new Vector2Int(boxVar.GetComponent<Box>().posX, boxVar.GetComponent<Box>().posY), new Vector2Int(flag.GetComponent<Entity>().posX, flag.GetComponent<Entity>().posY));
             if(distanceTmp < distance)
             {
                 distance = distanceTmp;
                 box = boxVar;
             }
         }
-        box.isFull = true;
+        box.GetComponent<Box>().isFull = true;
 
-        boxes.Find(x => warrior.posX == x.posX && warrior.posY == x.posY).isFull = false;
+        boxes.Find(x => warrior.posX == x.GetComponent<Box>().posX && warrior.posY == x.GetComponent<Box>().posY).GetComponent<Box>().isFull = false;
 
-        warrior.Move(box);
+        warrior.Move(box.GetComponent<Box>());
     }
 
     private Vector2Int ProcessWarriorSpawn()
     {
         Vector2Int pos = new Vector2Int();
 
-        Box box = boxes.Find(x => x.isFull == false);
+        Box box = boxes.Find(x => x.GetComponent<Box>().isFull == false).GetComponent<Box>();
         pos = new Vector2Int(box.posX, box.posY);
 
         box.isFull = true;
@@ -124,8 +136,8 @@ public class Game : MonoBehaviour
     {
         Vector2Int pos = new Vector2Int();
 
-        List<Box> boxFinded = boxes.FindAll(x => x.isFull == false);
-        Box boxToSpawn = boxFinded[Random.Range (0, boxFinded.Count)];
+        List<GameObject> boxFinded = boxes.FindAll(x => x.GetComponent<Box>().isFull == false);
+        Box boxToSpawn = boxFinded[Random.Range (0, boxFinded.Count)].GetComponent<Box>();
         pos = new Vector2Int(boxToSpawn.posX, boxToSpawn.posY);
 
         boxToSpawn.isFull = true;

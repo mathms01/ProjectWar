@@ -8,6 +8,9 @@ public class GameElement : MonoBehaviour
     public int posX;
     public int posY;
 
+    public int startPosX;
+    public int startPosY;
+
     //gameobject de l'element
     public GameObject elementGameObject;
 
