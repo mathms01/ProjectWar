@@ -19,6 +19,9 @@ public class Game : MonoBehaviour
 
     public List<GameObject> monsters;
 
+    public GameObject playerPrefab;
+    private GameObject playerObject;
+
     private GameObject flag;
 
     // Start is called before the first frame update
@@ -49,6 +52,9 @@ public class Game : MonoBehaviour
         flagObject.CreateFlag(pos.x, pos.y);
         Instantiate(flag);
 
+        playerObject = Instantiate(playerPrefab);
+        Player playerComponent = playerObject.AddComponent<Player>() as Player;
+        playerComponent.CreatePlayer(pos.x, pos.y);
 
         for (int i = 0; i < WARRIORSATSTART; i++)
         {

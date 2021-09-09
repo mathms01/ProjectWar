@@ -21,8 +21,10 @@ public class Entity : GameElement
         else
         {
             currentLife = 0;
-            if(isDestroyed = false)
-            DestroyCurrentEntity();
+            if(isDestroyed == false)
+            {
+                DestroyCurrentEntity();
+            }
             isDestroyed = true;
         }
     }
