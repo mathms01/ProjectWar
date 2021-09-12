@@ -19,7 +19,7 @@ public class Warrior : Entity
         this.damage = 100;
         this.elementGameObject = this.gameObject;
         this.elementGameObject.transform.localScale = new Vector3(1f, 1.5f, 1f);
-        this.elementGameObject.transform.position = new Vector3(posX, 2f, posY);
+        this.elementGameObject.transform.position = new Vector3(posX, 1.5f, posY);
         //RandomChangeColor();
     }
 
@@ -32,10 +32,10 @@ public class Warrior : Entity
     }
 
     IEnumerator MoveAnim(){
-         while( this.elementGameObject.transform.position != new Vector3(posX, 2f, posY))
+         while( this.elementGameObject.transform.position != new Vector3(posX, 1.5f, posY))
          {
-            this.elementGameObject.transform.position = Vector3.Lerp(this.elementGameObject.transform.position, new Vector3(posX, 2f, posY), Time.deltaTime * speed);
-            Quaternion rotateDirection = Quaternion.LookRotation(new Vector3(posX, 2f, posY) - this.elementGameObject.transform.position);
+            this.elementGameObject.transform.position = Vector3.Lerp(this.elementGameObject.transform.position, new Vector3(posX, 1.5f, posY), Time.deltaTime * speed);
+            Quaternion rotateDirection = Quaternion.LookRotation(new Vector3(posX, 1.5f, posY) - this.elementGameObject.transform.position);
             this.elementGameObject.transform.rotation = Quaternion.Lerp(this.elementGameObject.transform.rotation, rotateDirection, Time.deltaTime * rotSpeed);
             yield return new WaitForSeconds(1f);
          }

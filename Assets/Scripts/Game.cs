@@ -12,6 +12,10 @@ public class Game : MonoBehaviour
 
     public int ROUND = 0;
 
+    //Controls
+    protected FixedJoystick joystick;
+    protected JoyButton joybutton;
+
     public List<GameObject> boxes;
 
     public List<GameObject> warriors;
@@ -30,10 +34,24 @@ public class Game : MonoBehaviour
         InitiateGame();
     }
 
+    void Update()
+    {
+        if(playerPrefab)
+        {
+            Rigidbody rbPlayer = playerObject.GetComponent<Rigidbody>();
+            rbPlayer.velocity = new Vector3(joystick.Horizontal * 10f + Input.GetAxis("Horizontal") * 10f,
+            rbPlayer.velocity.y,
+            joystick.Vertical * 10f + Input.GetAxis("Vertical") * 10f);
+        }
+    }
+
     private void InitiateGame()
     {
         boxes = new List<GameObject>();
         warriors = new List<GameObject>();
+
+        this.joybutton = FindObjectOfType<JoyButton>();
+        this.joystick = FindObjectOfType<FixedJoystick>();
 
         for (int i = 0; i < DESKSIZE; i++)
         {
@@ -41,6 +59,7 @@ public class Game : MonoBehaviour
             {
                 GameObject newBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 Box boxObject = newBox.AddComponent<Box>() as Box;
+                BoxCollider boxCollider = newBox.AddComponent<BoxCollider>() as BoxCollider;
                 boxObject.CreateBox(i, j);
                 boxes.Add(newBox);   
             }

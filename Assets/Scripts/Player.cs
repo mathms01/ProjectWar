@@ -8,6 +8,9 @@ public class Player : Entity
     float speed = 30f;
     float rotSpeed = 30f;
 
+    //Animateur
+    Animator animPlayer;
+
     public void CreatePlayer(int posX, int posY)
     {
         this.posX = posX;
@@ -16,9 +19,20 @@ public class Player : Entity
         this.currentLife = fullLife;
         this.damage = 100;
         this.elementGameObject = this.gameObject;
-        this.elementGameObject.transform.localScale = new Vector3(1f, 1.5f, 1f);
-        this.elementGameObject.transform.position = new Vector3(posX, 2f, posY);
+        this.animPlayer = this.elementGameObject.GetComponent<Animator>();
+        this.elementGameObject.transform.localScale = new Vector3(1f, 1f, 1f);
+        this.elementGameObject.transform.position = new Vector3(posX, 1.5f, posY);
         //RandomChangeColor();
+    }
+
+    void Update() {
+        UpdateAnim();
+    }
+
+    private void UpdateAnim()
+    {
+        float currentSpeed = this.elementGameObject.GetComponent<Rigidbody>().velocity.magnitude;
+        this.animPlayer.SetFloat("speed", currentSpeed);
     }
 
     public void Move(Box boxToGo)
@@ -28,17 +42,5 @@ public class Player : Entity
         this.posX = boxToGo.posX;
         this.posY = boxToGo.posY;
         StartCoroutine("MoveAnim");
-    }
-
-    IEnumerator MoveAnim()
-    {
-        while (this.elementGameObject.transform.position != new Vector3(posX, 2f, posY))
-        {
-            this.elementGameObject.transform.position = Vector3.Lerp(this.elementGameObject.transform.position, new Vector3(posX, 2f, posY), Time.deltaTime * speed);
-            Quaternion rotateDirection = Quaternion.LookRotation(new Vector3(posX, 2f, posY) - this.elementGameObject.transform.position);
-            this.elementGameObject.transform.rotation = Quaternion.Lerp(this.elementGameObject.transform.rotation, rotateDirection, Time.deltaTime * rotSpeed);
-            yield return new WaitForSeconds(1f);
-        }
-        yield return new WaitForSeconds(10f);
     }
 }
