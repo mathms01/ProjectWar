@@ -13,6 +13,7 @@ public class Game : MonoBehaviour
     public static float TIMEBETWEENROUNDS = 1f;
     public static float TIMEBETWEENMOVES = .1f;
 
+    public int ROUND_ACTIONS = 0;
     public int ROUND = 0;
 
     //Controls
@@ -102,14 +103,18 @@ public class Game : MonoBehaviour
         while (true)
         {
             ROUND += 1;
-            Debug.Log("Round - "+ROUND);
-            foreach (var warrior in warriors)
+            Debug.Log("Round - " + ROUND);
+            while (warriors.Count > 0 || flag.GetComponent<Flag>().currentLife >= 0 || playerObject.GetComponent<Player>().currentLife >= 0)
             {
-                ProcessWarriorMoveToFlag(warrior.GetComponent<Warrior>());
-                ProcessWarriorAttack(warrior.GetComponent<Warrior>());
-                yield return new WaitForSeconds(TIMEBETWEENMOVES);
+                ROUND_ACTIONS += 1;
+                foreach (var warrior in warriors)
+                {
+                    ProcessWarriorMoveToFlag(warrior.GetComponent<Warrior>());
+                    ProcessWarriorAttack(warrior.GetComponent<Warrior>());
+                    yield return new WaitForSeconds(TIMEBETWEENMOVES);
+                }
+                yield return new WaitForSeconds(TIMEBETWEENROUNDS);
             }
-            yield return new WaitForSeconds(TIMEBETWEENROUNDS);    
         }
     }
 
