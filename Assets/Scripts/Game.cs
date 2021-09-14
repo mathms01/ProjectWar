@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Classe du Jeu
+/// </summary>
 public class Game : MonoBehaviour
 {
     public static int DESKSIZE = 50;
@@ -45,6 +48,9 @@ public class Game : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initialisation de la partie
+    /// </summary>
     private void InitiateGame()
     {
         boxes = new List<GameObject>();
@@ -87,6 +93,10 @@ public class Game : MonoBehaviour
         StartCoroutine("PlayRound");
     }
 
+    /// <summary>
+    /// Jouer une vague
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator PlayRound()
     {
         while (true)
@@ -103,6 +113,10 @@ public class Game : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Faire attaquer le monstre s'il peut
+    /// </summary>
+    /// <param name="warrior"></param>
     private void ProcessWarriorAttack(Warrior warrior)
     {
         if(Functions.TestRange(warrior.target.posX, warrior.posX-1,warrior.posX+1) && Functions.TestRange(warrior.target.posY, warrior.posY-1,warrior.posY+1))
@@ -111,6 +125,10 @@ public class Game : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Faire bouger le monstre dans la direction voulu
+    /// </summary>
+    /// <param name="warrior"></param>
     private void ProcessWarriorMove(Warrior warrior)
     {
         List<GameObject> boxesFinded = boxes.FindAll(x => x.GetComponent<Box>().isFull == false && Functions.TestRange(x.GetComponent<Box>().posX, warrior.posX-1,warrior.posX+1) && Functions.TestRange(x.GetComponent<Box>().posY, warrior.posY-1,warrior.posY+1));
@@ -122,6 +140,10 @@ public class Game : MonoBehaviour
         warrior.Move(box.GetComponent<Box>());
     }
 
+    /// <summary>
+    /// Déplacement du monstre vers le drapeau
+    /// </summary>
+    /// <param name="warrior"></param>
     private void ProcessWarriorMoveToFlag(Warrior warrior)
     {
         warrior.target = flag.GetComponent<Entity>();
@@ -145,6 +167,10 @@ public class Game : MonoBehaviour
         warrior.Move(box.GetComponent<Box>());
     }
 
+    /// <summary>
+    /// Apparisition d'un monstre
+    /// </summary>
+    /// <returns></returns>
     private Vector2Int ProcessWarriorSpawn()
     {
         Vector2Int pos = new Vector2Int();
@@ -157,6 +183,10 @@ public class Game : MonoBehaviour
         return pos;
     }
 
+    /// <summary>
+    /// Apparition du drapeau
+    /// </summary>
+    /// <returns></returns>
     private Vector2Int ProcessFlagSpawn()
     {
         Vector2Int pos = new Vector2Int();

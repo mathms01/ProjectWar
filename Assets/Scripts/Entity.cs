@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Classe d'une entité (élément du jeu pouvant être détruit)
+/// </summary>
 public class Entity : GameElement
 {
     protected int fullLife;
@@ -11,6 +14,10 @@ public class Entity : GameElement
 
     public bool isDestroyed = false;
 
+    /// <summary>
+    /// Infliger des dégats à l'objet
+    /// </summary>
+    /// <param name="dmg">puissance de l'attaque</param>
     public void TakeDamage(int dmg)
     {
         if((currentLife - dmg) > 0)
@@ -29,6 +36,9 @@ public class Entity : GameElement
         }
     }
 
+    /// <summary>
+    /// Destruction de l'entité
+    /// </summary>
     public void DestroyCurrentEntity()
     {
         Debug.Log("Entity is destroyed !");

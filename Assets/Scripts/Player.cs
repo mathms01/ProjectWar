@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Classe du joueur
+/// </summary>
 public class Player : Entity
 {
     // Visual settings:
@@ -11,6 +14,11 @@ public class Player : Entity
     //Animateur
     Animator animPlayer;
 
+    /// <summary>
+    /// Initialisation du Joueur
+    /// </summary>
+    /// <param name="posX"></param>
+    /// <param name="posY"></param>
     public void CreatePlayer(int posX, int posY)
     {
         this.posX = posX;
@@ -29,12 +37,16 @@ public class Player : Entity
         UpdateAnim();
     }
 
+    /// <summary>
+    /// MAJ de l'animation du joueur
+    /// </summary>
     private void UpdateAnim()
     {
         float currentSpeed = this.elementGameObject.GetComponent<Rigidbody>().velocity.magnitude;
         this.animPlayer.SetFloat("speed", currentSpeed);
     }
 
+    //Déplacement du joueur
     public void Move(Box boxToGo)
     {
         this.startPosX = this.posX;

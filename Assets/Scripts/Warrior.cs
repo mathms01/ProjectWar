@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Classe Warrior -> Monstres du jeu
+/// </summary>
 public class Warrior : Entity
 {
     public Entity target;
@@ -10,6 +13,11 @@ public class Warrior : Entity
     float speed = 30f;
     float rotSpeed = 30f;
 
+    /// <summary>
+    /// Initialisation du Warrior
+    /// </summary>
+    /// <param name="posX">position X</param>
+    /// <param name="posY">position Y</param>
     public void CreateWarrior(int posX, int posY)
     {
         this.posX = posX;
@@ -23,6 +31,10 @@ public class Warrior : Entity
         //RandomChangeColor();
     }
 
+    /// <summary>
+    /// Déplacement du Warrior
+    /// </summary>
+    /// <param name="boxToGo">box de target</param>
     public void Move(Box boxToGo){
         this.startPosX = this.posX;
         this.startPosY = this.posY;
@@ -31,6 +43,10 @@ public class Warrior : Entity
         StartCoroutine("MoveAnim");
     }
 
+    /// <summary>
+    /// Animation de déplacement et déplacement
+    /// </summary>
+    /// <returns></returns>
     IEnumerator MoveAnim(){
          while( this.elementGameObject.transform.position != new Vector3(posX, 1.5f, posY))
          {
@@ -42,6 +58,10 @@ public class Warrior : Entity
         yield return new WaitForSeconds(10f);
     }
 
+    /// <summary>
+    /// Modifie la target du Warrior
+    /// </summary>
+    /// <param name="newTarget"></param>
     public void ChangeTarget(Entity newTarget)
     {
         this.target = newTarget;

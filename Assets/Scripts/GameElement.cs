@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Element du jeu
+/// </summary>
 public class GameElement : MonoBehaviour
 {
         //position de la case
@@ -14,6 +17,9 @@ public class GameElement : MonoBehaviour
     //gameobject de l'element
     public GameObject elementGameObject;
 
+    /// <summary>
+    /// Changer la couleur de l'élément en damier
+    /// </summary>
     public void BoxChangeColor()
     {
         Color color;
@@ -25,6 +31,9 @@ public class GameElement : MonoBehaviour
         elementGameObject.GetComponent<MeshRenderer>().material.color = color;
     }
 
+    /// <summary>
+    /// Changer la couleur de l'élément de manière random
+    /// </summary>
     public void RandomChangeColor()
     {
         Color color;

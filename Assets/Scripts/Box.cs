@@ -7,6 +7,11 @@ public class Box : GameElement
     //Gameplay
     public bool isFull;
 
+    /// <summary>
+    /// Création d'un "Box" -> sol
+    /// </summary>
+    /// <param name="posX">position x</param>
+    /// <param name="posY">position y</param>
     public void CreateBox(int posX, int posY)
     {
         this.posX = posX;
