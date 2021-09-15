@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using UnityEngine.UI;
 
 /// <summary>
 /// Classe du Jeu
@@ -20,12 +22,13 @@ public class Game : MonoBehaviour
     protected FixedJoystick joystick;
     protected JoyButton joybutton;
 
-    public List<GameObject> boxes;
+    private List<GameObject> boxes;
 
-    public List<GameObject> warriors;
-    public List<Team> teams;
+    private List<GameObject> warriors;
+    private List<Team> teams;
 
     public List<GameObject> monsters;
+    public List<EnvironmentProps> props;
 
     public GameObject playerPrefab;
     private GameObject playerObject;
@@ -40,7 +43,7 @@ public class Game : MonoBehaviour
 
     void Update()
     {
-        if(playerPrefab)
+        if(playerObject)
         {
             Rigidbody rbPlayer = playerObject.GetComponent<Rigidbody>();
             rbPlayer.velocity = new Vector3(joystick.Horizontal * 10f + Input.GetAxis("Horizontal") * 10f,
@@ -56,6 +59,7 @@ public class Game : MonoBehaviour
     {
         boxes = new List<GameObject>();
         warriors = new List<GameObject>();
+        GameObject healthCanvas;
 
         this.joybutton = FindObjectOfType<JoyButton>();
         this.joystick = FindObjectOfType<FixedJoystick>();
@@ -64,7 +68,7 @@ public class Game : MonoBehaviour
         {
             for (int j = 0; j < DESKSIZE; j++)
             {
-                GameObject newBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                GameObject newBox = Instantiate(props.Where(obj => obj.title == "floor").SingleOrDefault().prefabObject);
                 Box boxObject = newBox.AddComponent<Box>() as Box;
                 BoxCollider boxCollider = newBox.AddComponent<BoxCollider>() as BoxCollider;
                 boxObject.CreateBox(i, j);
@@ -76,7 +80,8 @@ public class Game : MonoBehaviour
         flag = Instantiate((GameObject)Resources.Load("Prefabs/Flag", typeof(GameObject)));
         Flag flagObject = flag.AddComponent<Flag>() as Flag;
         flagObject.CreateFlag(pos.x, pos.y);
-        Instantiate(flag);
+        healthCanvas = Instantiate((GameObject)Resources.Load("Prefabs/Health Bar", typeof(GameObject)), flagObject.transform);
+        flagObject.healthBar = healthCanvas.GetComponentInChildren(typeof(Slider)) as Slider;
 
         playerObject = Instantiate(playerPrefab);
         Player playerComponent = playerObject.AddComponent<Player>() as Player;
@@ -88,6 +93,8 @@ public class Game : MonoBehaviour
             GameObject newWarrior = Instantiate(monsters[Random.Range (0, monsters.Count)]);
             Warrior warrior = newWarrior.AddComponent<Warrior>() as Warrior;
             warrior.CreateWarrior(posWarriors.x, posWarriors.y);
+            healthCanvas = Instantiate((GameObject)Resources.Load("Prefabs/Health Bar", typeof(GameObject)), warrior.transform);
+            warrior.healthBar = healthCanvas.GetComponentInChildren(typeof(Slider)) as Slider;
             warriors.Add(newWarrior);
         }
 

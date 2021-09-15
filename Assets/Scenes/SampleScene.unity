@@ -799,6 +799,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2066896392038628118, guid: 45288819fde2143449a96207b14db0bb, type: 3}
     - target: {fileID: 4555768322282932897, guid: baec7450d5a882b48ac6c928acde1955, type: 3}
+      propertyPath: props.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4555768322282932897, guid: baec7450d5a882b48ac6c928acde1955, type: 3}
       propertyPath: teams.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -822,5 +826,13 @@ PrefabInstance:
       propertyPath: monsters.Array.data[3]
       value: 
       objectReference: {fileID: 1774625739149480, guid: 38efdaadbfe1d624bbee439cb02e7661, type: 3}
+    - target: {fileID: 4555768322282932897, guid: baec7450d5a882b48ac6c928acde1955, type: 3}
+      propertyPath: props.Array.data[0].title
+      value: floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 4555768322282932897, guid: baec7450d5a882b48ac6c928acde1955, type: 3}
+      propertyPath: props.Array.data[0].prefabObject
+      value: 
+      objectReference: {fileID: 6616142317143122160, guid: f8aa396952c169d4c898e4d8204c6b60, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: baec7450d5a882b48ac6c928acde1955, type: 3}

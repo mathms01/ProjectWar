@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Classe d'une entité (élément du jeu pouvant être détruit)
@@ -9,6 +10,7 @@ public class Entity : GameElement
 {
     protected int fullLife;
     public int currentLife;
+    public Slider healthBar;
 
     public int damage;
 
@@ -24,10 +26,15 @@ public class Entity : GameElement
         {
             Debug.Log("Taking Damage : "+currentLife);
             currentLife -= dmg;
+            if(healthBar != null)
+                healthBar.value = (float)(fullLife / currentLife);
         }
         else
         {
             currentLife = 0;
+            if(healthBar != null)
+                healthBar.value = currentLife;
+
             if(isDestroyed == false)
             {
                 DestroyCurrentEntity();
