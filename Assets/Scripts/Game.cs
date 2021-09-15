@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class Game : MonoBehaviour
 {
     public static int DESKSIZE = 50;
-    public static int WARRIORSATSTART = 20;
+    public static int WARRIORSATSTART = 1;
 
     public static float TIMEBETWEENROUNDS = 1f;
     public static float TIMEBETWEENMOVES = .1f;
@@ -82,6 +82,8 @@ public class Game : MonoBehaviour
         flagObject.CreateFlag(pos.x, pos.y);
         healthCanvas = Instantiate((GameObject)Resources.Load("Prefabs/Health Bar", typeof(GameObject)), flagObject.transform);
         flagObject.healthBar = healthCanvas.GetComponentInChildren(typeof(Slider)) as Slider;
+        flagObject.healthBar.maxValue = flagObject.fullLife;
+        flagObject.healthBar.value = flagObject.currentLife;
 
         playerObject = Instantiate(playerPrefab);
         Player playerComponent = playerObject.AddComponent<Player>() as Player;
@@ -95,6 +97,8 @@ public class Game : MonoBehaviour
             warrior.CreateWarrior(posWarriors.x, posWarriors.y);
             healthCanvas = Instantiate((GameObject)Resources.Load("Prefabs/Health Bar", typeof(GameObject)), warrior.transform);
             warrior.healthBar = healthCanvas.GetComponentInChildren(typeof(Slider)) as Slider;
+            warrior.healthBar.maxValue = warrior.fullLife;
+            warrior.healthBar.value = warrior.currentLife;
             warriors.Add(newWarrior);
         }
 
@@ -111,12 +115,12 @@ public class Game : MonoBehaviour
         {
             ROUND += 1;
             Debug.Log("Round - " + ROUND);
-            while (warriors.Count > 0 || flag.GetComponent<Flag>().currentLife >= 0 || playerObject.GetComponent<Player>().currentLife >= 0)
+            while (warriors.Count > 0 || flag.GetComponent<Flag>().currentLife > 0 || playerObject.GetComponent<Player>().currentLife > 0)
             {
                 ROUND_ACTIONS += 1;
                 foreach (var warrior in warriors)
                 {
-                    ProcessWarriorMoveToFlag(warrior.GetComponent<Warrior>());
+                    ProcessWarriorMoveTo(warrior.GetComponent<Warrior>());
                     ProcessWarriorAttack(warrior.GetComponent<Warrior>());
                     yield return new WaitForSeconds(TIMEBETWEENMOVES);
                 }
@@ -131,7 +135,7 @@ public class Game : MonoBehaviour
     /// <param name="warrior"></param>
     private void ProcessWarriorAttack(Warrior warrior)
     {
-        if(Functions.TestRange(warrior.target.posX, warrior.posX-1,warrior.posX+1) && Functions.TestRange(warrior.target.posY, warrior.posY-1,warrior.posY+1))
+        if(Vector3.Distance(warrior.gameObject.transform.position, warrior.target.gameObject.transform.position) < warrior.ATTACKRANGE)
         {
             warrior.target.TakeDamage(warrior.damage);
         }
@@ -153,19 +157,44 @@ public class Game : MonoBehaviour
     }
 
     /// <summary>
+    /// Détection d'un joueur proche
+    /// </summary>
+    /// <param name="warrior"></param>
+    private Entity DetectPlayer(Warrior warrior)
+    {
+        if(Vector3.Distance(warrior.gameObject.transform.position, playerObject.transform.position) < warrior.DETECTENEMYDISTANCE)
+        {
+            return playerObject.GetComponent<Player>();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
     /// Déplacement du monstre vers le drapeau
     /// </summary>
     /// <param name="warrior"></param>
-    private void ProcessWarriorMoveToFlag(Warrior warrior)
+    private void ProcessWarriorMoveTo(Warrior warrior)
     {
-        warrior.target = flag.GetComponent<Entity>();
+        var playerDetected = DetectPlayer(warrior);
+        if(playerDetected != null)
+        {
+            warrior.ChangeTarget(playerDetected);
+        }
+        else
+        {
+            warrior.ChangeTarget(flag.GetComponent<Entity>());
+        }
+        
         List<GameObject> boxesFinded = boxes.FindAll(x => x.GetComponent<Box>().isFull == false && Functions.TestRange(x.GetComponent<Box>().posX, warrior.posX-1,warrior.posX+1) && Functions.TestRange(x.GetComponent<Box>().posY, warrior.posY-1,warrior.posY+1));
 
         GameObject box = boxesFinded[0];
         float distance = 1000f;
         foreach (var boxVar in boxesFinded)
         {
-            float distanceTmp = Vector2Int.Distance(new Vector2Int(boxVar.GetComponent<Box>().posX, boxVar.GetComponent<Box>().posY), new Vector2Int(flag.GetComponent<Entity>().posX, flag.GetComponent<Entity>().posY));
+            float distanceTmp = Vector2Int.Distance(new Vector2Int(boxVar.GetComponent<Box>().posX, boxVar.GetComponent<Box>().posY), new Vector2Int(warrior.target.GetComponent<Entity>().posX, warrior.target.GetComponent<Entity>().posY));
             if(distanceTmp < distance)
             {
                 distance = distanceTmp;

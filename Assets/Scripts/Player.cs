@@ -35,6 +35,7 @@ public class Player : Entity
 
     void Update() {
         UpdateAnim();
+        Move();
     }
 
     /// <summary>
@@ -47,12 +48,11 @@ public class Player : Entity
     }
 
     //Déplacement du joueur
-    public void Move(Box boxToGo)
+    public void Move()
     {
         this.startPosX = this.posX;
         this.startPosY = this.posY;
-        this.posX = boxToGo.posX;
-        this.posY = boxToGo.posY;
-        StartCoroutine("MoveAnim");
+        this.posX = (int)this.elementGameObject.transform.position.x;
+        this.posY = (int)this.elementGameObject.transform.position.z;
     }
 }

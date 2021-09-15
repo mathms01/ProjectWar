@@ -7,6 +7,9 @@ using UnityEngine;
 /// </summary>
 public class Warrior : Entity
 {
+    public int DETECTENEMYDISTANCE = 15;
+    public int ATTACKRANGE = 3;
+
     public Entity target;
 
     // Visual settings:
@@ -24,7 +27,7 @@ public class Warrior : Entity
         this.posY = posY;
         this.fullLife = 10;
         this.currentLife = fullLife;
-        this.damage = 100;
+        this.damage = 20;
         this.elementGameObject = this.gameObject;
         this.elementGameObject.transform.localScale = new Vector3(1f, 1f, 1f);
         this.elementGameObject.transform.position = new Vector3(posX, 1f, posY);

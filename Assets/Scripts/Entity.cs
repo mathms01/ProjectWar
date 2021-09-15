@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 public class Entity : GameElement
 {
-    protected int fullLife;
+    public int fullLife;
     public int currentLife;
     public Slider healthBar;
 
@@ -27,7 +27,7 @@ public class Entity : GameElement
             Debug.Log("Taking Damage : "+currentLife);
             currentLife -= dmg;
             if(healthBar != null)
-                healthBar.value = (float)(fullLife / currentLife);
+                healthBar.value = currentLife;
         }
         else
         {
