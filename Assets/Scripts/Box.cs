@@ -18,7 +18,6 @@ public class Box : GameElement
         this.posY = posY;
         this.elementGameObject = this.gameObject;
         this.elementGameObject.transform.position = new Vector3(posX, 1f, posY);
-        BoxChangeColor();
         isFull = false;
     }
 }

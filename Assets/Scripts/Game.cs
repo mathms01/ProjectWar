@@ -9,29 +9,39 @@ using UnityEngine.UI;
 /// </summary>
 public class Game : MonoBehaviour
 {
+    [Header("Options de la partie")]
     public static int DESKSIZE = 50;
     public static int WARRIORSATSTART = 1;
+    [Range(0, 1)]public static float MAPPROPSDENSITY = 0.5f;
 
     public static float TIMEBETWEENROUNDS = 1f;
     public static float TIMEBETWEENMOVES = .1f;
 
+    [Header("Affichage")]
     public int ROUND_ACTIONS = 0;
     public int ROUND = 0;
+
+    [Header("Objets à instantier")]
+    public List<GameObject> monsters;
+    public List<EnvironmentProps> props;
+
+    [Header("Joueur")]
+    public GameObject playerPrefab;
+    public Slider playerHealthBar;
+    public int golds = 0;
 
     //Controls
     protected FixedJoystick joystick;
     protected JoyButton joybutton;
 
     private List<GameObject> boxes;
+    private List<GameObject> propsInstantiate;
 
     private List<GameObject> warriors;
     private List<Team> teams;
 
-    public List<GameObject> monsters;
-    public List<EnvironmentProps> props;
-
-    public GameObject playerPrefab;
     private GameObject playerObject;
+    private Vector2Int startPos;
 
     private GameObject flag;
 
@@ -45,10 +55,22 @@ public class Game : MonoBehaviour
     {
         if(playerObject)
         {
+            float speedVar = playerObject.GetComponent<Player>().speed;
             Rigidbody rbPlayer = playerObject.GetComponent<Rigidbody>();
-            rbPlayer.velocity = new Vector3(joystick.Horizontal * 10f + Input.GetAxis("Horizontal") * 10f,
+            Vector3 direction = new Vector3(joystick.Horizontal * speedVar + Input.GetAxis("Horizontal") * speedVar,
             rbPlayer.velocity.y,
-            joystick.Vertical * 10f + Input.GetAxis("Vertical") * 10f);
+            joystick.Vertical * speedVar + Input.GetAxis("Vertical") * speedVar); 
+            rbPlayer.velocity = direction;
+
+            if(joybutton.isPressed == true)
+            {
+                ProcessPlayerAttack();
+            }
+
+            /*if(rbPlayer.velocity != Vector3.zero)
+            {
+                playerObject.transform.rotation.SetLookRotation(direction);
+            }*/
         }
     }
 
@@ -59,6 +81,7 @@ public class Game : MonoBehaviour
     {
         boxes = new List<GameObject>();
         warriors = new List<GameObject>();
+        propsInstantiate = new List<GameObject>();
         GameObject healthCanvas;
 
         this.joybutton = FindObjectOfType<JoyButton>();
@@ -68,7 +91,7 @@ public class Game : MonoBehaviour
         {
             for (int j = 0; j < DESKSIZE; j++)
             {
-                GameObject newBox = Instantiate(props.Where(obj => obj.title == "floor").SingleOrDefault().prefabObject);
+                GameObject newBox = Instantiate(props.Where(obj => obj.title == "floor").FirstOrDefault().prefabObject);
                 Box boxObject = newBox.AddComponent<Box>() as Box;
                 BoxCollider boxCollider = newBox.AddComponent<BoxCollider>() as BoxCollider;
                 boxObject.CreateBox(i, j);
@@ -76,18 +99,17 @@ public class Game : MonoBehaviour
             }
         }
 
-        Vector2Int pos = ProcessFlagSpawn();
-        flag = Instantiate((GameObject)Resources.Load("Prefabs/Flag", typeof(GameObject)));
-        Flag flagObject = flag.AddComponent<Flag>() as Flag;
-        flagObject.CreateFlag(pos.x, pos.y);
-        healthCanvas = Instantiate((GameObject)Resources.Load("Prefabs/Health Bar", typeof(GameObject)), flagObject.transform);
-        flagObject.healthBar = healthCanvas.GetComponentInChildren(typeof(Slider)) as Slider;
-        flagObject.healthBar.maxValue = flagObject.fullLife;
-        flagObject.healthBar.value = flagObject.currentLife;
+        FlagSpawn();
 
         playerObject = Instantiate(playerPrefab);
         Player playerComponent = playerObject.AddComponent<Player>() as Player;
-        playerComponent.CreatePlayer(pos.x, pos.y);
+        playerComponent.CreatePlayer(startPos.x, startPos.y+5);
+        playerComponent.healthBar = playerHealthBar;
+        playerComponent.healthBar.maxValue = playerComponent.fullLife;
+        playerComponent.healthBar.value = playerComponent.currentLife;
+
+
+        ProcessSpawnProps();
 
         for (int i = 0; i < WARRIORSATSTART; i++)
         {
@@ -103,6 +125,42 @@ public class Game : MonoBehaviour
         }
 
         StartCoroutine("PlayRound");
+    }
+
+    ///Faire spawn le drapeau
+    private void FlagSpawn()
+    {
+        GameObject healthCanvas;
+        startPos = ProcessFlagSpawn();
+        flag = Instantiate((GameObject)Resources.Load("Prefabs/Flag", typeof(GameObject)));
+        Flag flagObject = flag.AddComponent<Flag>() as Flag;
+        flagObject.CreateFlag(startPos.x, startPos.y);
+        healthCanvas = Instantiate((GameObject)Resources.Load("Prefabs/Health Bar", typeof(GameObject)), flagObject.transform);
+        flagObject.healthBar = healthCanvas.GetComponentInChildren(typeof(Slider)) as Slider;
+        flagObject.healthBar.maxValue = flagObject.fullLife;
+        flagObject.healthBar.value = flagObject.currentLife;
+    }
+
+    /// <summary>
+    /// Faire spawn les elements du décor
+    /// </summary>
+    private void ProcessSpawnProps()
+    {
+        foreach(var box in boxes)
+        {
+            if(box.GetComponent<Box>().isFull == false && Random.value < (MAPPROPSDENSITY/10))
+            {
+                List<EnvironmentProps> propsFinded = props.FindAll(obj => obj.title == "propsEnvironment");
+                if(propsFinded.Count > 0)
+                {
+                    GameObject newBox = Instantiate(propsFinded[Random.Range(0, propsFinded.Count)].prefabObject);
+                    Box boxObject = newBox.AddComponent<Box>() as Box;
+                    boxObject.CreateBox(box.GetComponent<Box>().posX, box.GetComponent<Box>().posY);
+                    propsInstantiate.Add(newBox);   
+                    box.GetComponent<Box>().isFull = true;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -130,6 +188,14 @@ public class Game : MonoBehaviour
     }
 
     /// <summary>
+    /// Le joueur attaque devant lui
+    /// </summary>
+    private void ProcessPlayerAttack()
+    {
+        this.playerObject.GetComponent<Player>().AttackAnim();
+    }
+
+    /// <summary>
     /// Faire attaquer le monstre s'il peut
     /// </summary>
     /// <param name="warrior"></param>
@@ -137,7 +203,7 @@ public class Game : MonoBehaviour
     {
         if(Vector3.Distance(warrior.gameObject.transform.position, warrior.target.gameObject.transform.position) < warrior.ATTACKRANGE)
         {
-            warrior.target.TakeDamage(warrior.damage);
+            warrior.target.TakeDamage(warrior.damage, warrior.gameObject);
         }
     }
 

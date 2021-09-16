@@ -13,6 +13,7 @@ public class Entity : GameElement
     public Slider healthBar;
 
     public int damage;
+    public int goldValue = 0;
 
     public bool isDestroyed = false;
 
@@ -20,7 +21,8 @@ public class Entity : GameElement
     /// Infliger des dégats à l'objet
     /// </summary>
     /// <param name="dmg">puissance de l'attaque</param>
-    public void TakeDamage(int dmg)
+    /// <param>gold à retourner</param>
+    public int TakeDamage(int dmg, GameObject source)
     {
         if((currentLife - dmg) > 0)
         {
@@ -37,16 +39,18 @@ public class Entity : GameElement
 
             if(isDestroyed == false)
             {
-                DestroyCurrentEntity();
+                DestroyCurrentEntity(source);
             }
             isDestroyed = true;
+            return goldValue;
         }
+        return 0;
     }
 
     /// <summary>
     /// Destruction de l'entité
     /// </summary>
-    public void DestroyCurrentEntity()
+    public void DestroyCurrentEntity(GameObject source)
     {
         Debug.Log("Entity is destroyed !");
     }

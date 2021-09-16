@@ -8,7 +8,7 @@ using UnityEngine;
 public class Player : Entity
 {
     // Visual settings:
-    float speed = 30f;
+    public float speed = 7f;
     float rotSpeed = 30f;
 
     //Animateur
@@ -45,6 +45,11 @@ public class Player : Entity
     {
         float currentSpeed = this.elementGameObject.GetComponent<Rigidbody>().velocity.magnitude;
         this.animPlayer.SetFloat("speed", currentSpeed);
+    }
+
+    public void AttackAnim()
+    {
+        this.animPlayer.SetTrigger("attack");
     }
 
     //Déplacement du joueur

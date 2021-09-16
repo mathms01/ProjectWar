@@ -29,6 +29,7 @@ public class Warrior : Entity
         this.currentLife = fullLife;
         this.damage = 20;
         this.elementGameObject = this.gameObject;
+        this.goldValue = Random.Range(5, 25);
         this.elementGameObject.transform.localScale = new Vector3(1f, 1f, 1f);
         this.elementGameObject.transform.position = new Vector3(posX, 1f, posY);
         //RandomChangeColor();

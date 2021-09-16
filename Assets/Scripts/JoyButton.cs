@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 public class JoyButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 {
     [HideInInspector]
-    protected bool isPressed;
+    public bool isPressed;
 
     // Start is called before the first frame update
     void Start()
