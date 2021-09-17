@@ -11,8 +11,9 @@ public class Game : MonoBehaviour
 {
     [Header("Options de la partie")]
     public static int DESKSIZE = 50;
-    public static int WARRIORSATSTART = 1;
-    [Range(0, 1)]public static float MAPPROPSDENSITY = 0.5f;
+    public int WARRIORSATSTART = 1;
+    [Range(0, 1)]public float MAPPROPSDENSITY = 0.5f;
+    [Range(1f, 2f)]public float WARRIORSMULTIPLIER = 1.2f;
 
     public static float TIMEBETWEENROUNDS = 1f;
     public static float TIMEBETWEENMOVES = .1f;
@@ -94,6 +95,7 @@ public class Game : MonoBehaviour
         warriors = new List<GameObject>();
         propsInstantiate = new List<GameObject>();
         GameObject healthCanvas;
+        ROUND = 0;
 
         this.joybutton = FindObjectOfType<JoyButton>();
         this.joystick = FindObjectOfType<FixedJoystick>();
@@ -122,20 +124,23 @@ public class Game : MonoBehaviour
 
         ProcessSpawnProps();
 
-        for (int i = 0; i < WARRIORSATSTART; i++)
+        StartCoroutine("PlayRound");
+    }
+
+    private void WarriorsSpawn()
+    {
+        for (int i = 0; i < ((int)WARRIORSATSTART * ROUND * WARRIORSMULTIPLIER); i++)
         {
             Vector2Int posWarriors = ProcessWarriorSpawn();
             GameObject newWarrior = Instantiate(monsters[Random.Range (0, monsters.Count)]);
             Warrior warrior = newWarrior.AddComponent<Warrior>() as Warrior;
             warrior.CreateWarrior(posWarriors.x, posWarriors.y);
-            healthCanvas = Instantiate((GameObject)Resources.Load("Prefabs/Health Bar", typeof(GameObject)), warrior.transform);
+            var healthCanvas = Instantiate((GameObject)Resources.Load("Prefabs/Health Bar", typeof(GameObject)), warrior.transform);
             warrior.healthBar = healthCanvas.GetComponentInChildren(typeof(Slider)) as Slider;
             warrior.healthBar.maxValue = warrior.fullLife;
             warrior.healthBar.value = warrior.currentLife;
             warriors.Add(newWarrior);
         }
-
-        StartCoroutine("PlayRound");
     }
 
     ///Faire spawn le drapeau
@@ -185,6 +190,7 @@ public class Game : MonoBehaviour
             ROUND += 1;
             Debug.Log("Round - " + ROUND);
             txtRound.text = ""+ROUND;
+            WarriorsSpawn();
             while (warriors.Count > 0)
             {
                 ROUND_ACTIONS += 1;
@@ -204,6 +210,7 @@ public class Game : MonoBehaviour
                 }
                 if(flag.GetComponent<Flag>().currentLife <= 0)
                     break;
+
                 yield return new WaitForSeconds(TIMEBETWEENROUNDS);
             }
         }
@@ -257,7 +264,14 @@ public class Game : MonoBehaviour
     {
         if(Vector3.Distance(warrior.gameObject.transform.position, playerObject.transform.position) < warrior.DETECTENEMYDISTANCE)
         {
-            return playerObject.GetComponent<Player>();
+            if(!playerObject.GetComponent<Player>().isDestroyed)
+            {
+                return playerObject.GetComponent<Player>();
+            }
+            else
+            {
+                return null;
+            }
         }
         else
         {
