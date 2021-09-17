@@ -28,11 +28,14 @@ public class Game : MonoBehaviour
 
     [Header("Joueur")]
     public GameObject playerPrefab;
+    public GameObject cameraPlayer;
 
     [Header("UI")]
     public Slider playerHealthBar;
     public Text txtGolds;
     public Text txtRound;
+    public GameObject overlayEndGame;
+    public Text pointOver;
 
     //Controls
     protected FixedJoystick joystick;
@@ -72,6 +75,7 @@ public class Game : MonoBehaviour
             }
 
             RefreshGolds();
+            CameraFollowPlayer();
 
             var input = new Vector3(joystick.Horizontal, 0, joystick.Vertical);
             if(input != Vector3.zero)
@@ -84,18 +88,24 @@ public class Game : MonoBehaviour
                 playerObject.transform.rotation.SetLookRotation(direction);
             }*/
         }
+        else
+        {
+            overlayEndGame.SetActive(true);
+            pointOver.text = ""+ROUND;
+        }
     }
 
     /// <summary>
     /// Initialisation de la partie
     /// </summary>
-    private void InitiateGame()
+    public void InitiateGame()
     {
         boxes = new List<GameObject>();
         warriors = new List<GameObject>();
         propsInstantiate = new List<GameObject>();
         GameObject healthCanvas;
         ROUND = 0;
+        overlayEndGame.SetActive(false);
 
         this.joybutton = FindObjectOfType<JoyButton>();
         this.joystick = FindObjectOfType<FixedJoystick>();
@@ -114,6 +124,9 @@ public class Game : MonoBehaviour
 
         FlagSpawn();
 
+        if(playerObject)
+            Destroy(playerObject);
+
         playerObject = Instantiate(playerPrefab);
         Player playerComponent = playerObject.AddComponent<Player>() as Player;
         playerComponent.CreatePlayer(startPos.x, startPos.y+2);
@@ -125,6 +138,11 @@ public class Game : MonoBehaviour
         ProcessSpawnProps();
 
         StartCoroutine("PlayRound");
+    }
+
+    private void CameraFollowPlayer()
+    {
+        this.cameraPlayer.transform.position = Vector3.Lerp(this.cameraPlayer.transform.position, playerObject.transform.position+new Vector3(0f,12f,0f), 0.1f);
     }
 
     private void WarriorsSpawn()
@@ -214,6 +232,8 @@ public class Game : MonoBehaviour
                 yield return new WaitForSeconds(TIMEBETWEENROUNDS);
             }
         }
+        overlayEndGame.SetActive(true);
+        pointOver.text = ""+ROUND;
     }
 
     public void RefreshGolds()
