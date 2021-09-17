@@ -13,3 +13,10 @@ Jeu réalisé dans le cadre du cours de programmation Android de l'IPI par Mathi
 - Ajouter d'autres monstres
 - Ajouter une compétence ultime par personnage
 - Ajouter un mode coopératif
+
+## APK du Jeu
+Lien : https://drive.google.com/drive/folders/1fvPkM9N0gGMrDb5G8XNzOtkt5AdLLNfN?usp=sharing
+(Merci de prendre la dernière version)
+
+## Contact
+Mathieu Mussot - mathieu.mussot@ipilyon.net
