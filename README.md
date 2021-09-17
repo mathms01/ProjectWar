@@ -14,6 +14,9 @@ Jeu réalisé dans le cadre du cours de programmation Android de l'IPI par Mathi
 - Ajouter une compétence ultime par personnage
 - Ajouter un mode coopératif
 
+## Slides de présentation du projet
+Lien : https://docs.google.com/presentation/d/1YUxLuo2Y_3Ua4s6u976VBylpBDs_H4THzdYLsINEbpc/edit?usp=sharing
+
 ## APK du Jeu
 Lien : https://drive.google.com/drive/folders/1fvPkM9N0gGMrDb5G8XNzOtkt5AdLLNfN?usp=sharing
 (Merci de prendre la dernière version)
