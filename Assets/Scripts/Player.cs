@@ -17,7 +17,7 @@ public class Player : Entity
 
     //Triggers
     private GameObject attackZone;
-    private bool isAttacking = false;
+    public bool isAttacking = false;
 
     /// <summary>
     /// Initialisation du Joueur

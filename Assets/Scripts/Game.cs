@@ -69,7 +69,7 @@ public class Game : MonoBehaviour
             joystick.Vertical * speedVar + Input.GetAxis("Vertical") * speedVar); 
             rbPlayer.velocity = direction;
 
-            if(joybutton.isPressed == true)
+            if(joybutton.isPressed == true  && playerObject.GetComponent<Player>().isAttacking == false)
             {
                 ProcessPlayerAttack();
             }
