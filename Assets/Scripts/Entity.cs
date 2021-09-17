@@ -26,7 +26,6 @@ public class Entity : GameElement
     {
         if((currentLife - dmg) > 0)
         {
-            Debug.Log("Taking Damage : "+currentLife);
             currentLife -= dmg;
             if(healthBar != null)
                 healthBar.value = currentLife;
@@ -40,9 +39,9 @@ public class Entity : GameElement
             if(isDestroyed == false)
             {
                 DestroyCurrentEntity(source);
+                isDestroyed = true;
+                return goldValue;
             }
-            isDestroyed = true;
-            return goldValue;
         }
         return 0;
     }
@@ -52,6 +51,6 @@ public class Entity : GameElement
     /// </summary>
     public void DestroyCurrentEntity(GameObject source)
     {
-        Debug.Log("Entity is destroyed !");
+        
     }
 }

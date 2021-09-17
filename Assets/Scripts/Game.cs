@@ -27,8 +27,11 @@ public class Game : MonoBehaviour
 
     [Header("Joueur")]
     public GameObject playerPrefab;
+
+    [Header("UI")]
     public Slider playerHealthBar;
-    public int golds = 0;
+    public Text txtGolds;
+    public Text txtRound;
 
     //Controls
     protected FixedJoystick joystick;
@@ -53,7 +56,7 @@ public class Game : MonoBehaviour
 
     void Update()
     {
-        if(playerObject)
+        if(playerObject && !playerObject.GetComponent<Player>().isDestroyed)
         {
             float speedVar = playerObject.GetComponent<Player>().speed;
             Rigidbody rbPlayer = playerObject.GetComponent<Rigidbody>();
@@ -65,6 +68,14 @@ public class Game : MonoBehaviour
             if(joybutton.isPressed == true)
             {
                 ProcessPlayerAttack();
+            }
+
+            RefreshGolds();
+
+            var input = new Vector3(joystick.Horizontal, 0, joystick.Vertical);
+            if(input != Vector3.zero)
+            {
+                this.playerObject.transform.forward = input;
             }
 
             /*if(rbPlayer.velocity != Vector3.zero)
@@ -103,7 +114,7 @@ public class Game : MonoBehaviour
 
         playerObject = Instantiate(playerPrefab);
         Player playerComponent = playerObject.AddComponent<Player>() as Player;
-        playerComponent.CreatePlayer(startPos.x, startPos.y+5);
+        playerComponent.CreatePlayer(startPos.x, startPos.y+2);
         playerComponent.healthBar = playerHealthBar;
         playerComponent.healthBar.maxValue = playerComponent.fullLife;
         playerComponent.healthBar.value = playerComponent.currentLife;
@@ -169,22 +180,38 @@ public class Game : MonoBehaviour
     /// <returns></returns>
     private IEnumerator PlayRound()
     {
-        while (true)
+        while (flag.GetComponent<Flag>().currentLife > 0)
         {
             ROUND += 1;
             Debug.Log("Round - " + ROUND);
-            while (warriors.Count > 0 || flag.GetComponent<Flag>().currentLife > 0 || playerObject.GetComponent<Player>().currentLife > 0)
+            txtRound.text = ""+ROUND;
+            while (warriors.Count > 0)
             {
                 ROUND_ACTIONS += 1;
-                foreach (var warrior in warriors)
+                foreach (var warrior in warriors.ToList())
                 {
-                    ProcessWarriorMoveTo(warrior.GetComponent<Warrior>());
-                    ProcessWarriorAttack(warrior.GetComponent<Warrior>());
+                    if(!warrior.GetComponent<Warrior>().isDestroyed)
+                    {
+                        ProcessWarriorMoveTo(warrior.GetComponent<Warrior>());
+                        ProcessWarriorAttack(warrior.GetComponent<Warrior>());
+                    }
+                    else
+                    {
+                        warriors.Remove(warrior);
+                        Destroy(warrior);
+                    }
                     yield return new WaitForSeconds(TIMEBETWEENMOVES);
                 }
+                if(flag.GetComponent<Flag>().currentLife <= 0)
+                    break;
                 yield return new WaitForSeconds(TIMEBETWEENROUNDS);
             }
         }
+    }
+
+    public void RefreshGolds()
+    {
+        txtGolds.text = ""+playerObject.GetComponent<Player>().golds;
     }
 
     /// <summary>
