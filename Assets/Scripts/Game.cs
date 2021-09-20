@@ -166,10 +166,9 @@ public class Game : MonoBehaviour
     {
         GameObject healthCanvas;
         startPos = ProcessFlagSpawn();
-        if(flag != null)
-        {
+        if(flag)
             Destroy(flag);
-        }
+            
         flag = Instantiate((GameObject)Resources.Load("Prefabs/Flag", typeof(GameObject)));
         Flag flagObject = flag.AddComponent<Flag>() as Flag;
         flagObject.CreateFlag(startPos.x, startPos.y);
